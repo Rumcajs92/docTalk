@@ -4,10 +4,11 @@ import edu.cmu.sphinx.api.Configuration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Map;
 
-
+@ExtendWith(YamlConfigurationParameterResolver.class)
 public class SpeechRecognitionModelsTest {
 
 
@@ -26,10 +27,6 @@ public class SpeechRecognitionModelsTest {
 
     @Test
     public void testSpeechRecognitionModels() {
-
-
-
-
 
         Assertions.assertEquals(1, 1);
 
