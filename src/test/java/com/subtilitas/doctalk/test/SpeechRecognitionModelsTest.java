@@ -1,34 +1,49 @@
 package com.subtilitas.doctalk.test;
 
+import com.subtilitas.doctalk.test.factory.exception.NoConfigurationFileError;
 import edu.cmu.sphinx.api.Configuration;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import edu.cmu.sphinx.api.SpeechResult;
+import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @ExtendWith(YamlConfigurationParameterResolver.class)
 public class SpeechRecognitionModelsTest {
 
 
-    private static final Configuration CONFIGURATION = new Configuration();
+    private final Configuration configuration;
 
-    private final Map<String, String> yamlMap;
+//    private final Map<String, String> yamlMap;
 
-    public SpeechRecognitionModelsTest(@YamlConfiguration Map<String, String> yamlMap) {
-        this.yamlMap = yamlMap;
+    public SpeechRecognitionModelsTest(@YamlConfiguration Configuration configuration) {
+        this.configuration = configuration;
     }
 
-    @BeforeAll
-    public static void setUp() {
-
-    }
 
     @Test
-    public void testSpeechRecognitionModels() {
+    public void testSpeechRecognitionModels(@YamlConfiguration String testFilesPath) throws IOException {
+        Path pathToTestFilesDirectory = Paths.get(testFilesPath);
+        if(!Files.exists(pathToTestFilesDirectory)) {
+            Files.createDirectory(pathToTestFilesDirectory);
+            throw new NoConfigurationFileError("The directory with tests do not exists");
+        }
 
-        Assertions.assertEquals(1, 1);
+//        Stream<Path> testDataDirectories = Files.list(pathToTestFilesDirectory);
+
+        StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(configuration);
+
+        Path audioFile = pathToTestFilesDirectory.resolve("test.wav");
+        Path transcript = pathToTestFilesDirectory.resolve("test-transcript.txt");
+
+        recognizer.startRecognition(Files.newInputStream(audioFile));
+        SpeechResult result = recognizer.getResult();
+        recognizer.stopRecognition();
+
 
 
     }

@@ -6,7 +6,7 @@ import org.yaml.snakeyaml.Yaml;
 
 public interface YamlProvidable {
 
-    default Yaml yaml(Yamls yaml) {
+    static Yaml yaml(Yamls yaml) {
         return ((YamlFactory) FactoryProvider.getFactory(Factory.YAMLS)).create(yaml);
     }
 }
