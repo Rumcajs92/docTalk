@@ -1,2 +1,2 @@
-``# docTalk
-Electron app that helps docs writing
+# docTalk
+app that helps docs writing
