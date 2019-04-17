@@ -1,0 +1,10 @@
+configuration:
+  acousticModelPath: "sss"
+  dictionaryPath: "ss"
+  languageModelPath: "sss"
+  grammarPath: "ss"
+  grammarName: "ss"
+  sampleRate: 16000
+  useGrammar: false
+testFilesPath: "./test-data"
+
