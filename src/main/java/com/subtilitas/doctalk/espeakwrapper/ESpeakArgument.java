@@ -1,5 +1,13 @@
 package com.subtilitas.doctalk.espeakwrapper;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+
+@Getter
+@AllArgsConstructor
+@RequiredArgsConstructor
 enum ESpeakArgument
 {
     TEXT_FILE_TO_SPEAK("-f"),
@@ -11,6 +19,7 @@ enum ESpeakArgument
     PITCH_ADJUSTMENT("-p"),
     WORD_SPEED("-s"),
     VOICE_NAME("-v"),
+    VOICES("--voices"),
     WAVE_FILE("-w"),
     INPUT_TEXT_ENCODING("-b"),
     INTERCEPT_SSML_MARKUP("-m"),
@@ -26,18 +35,14 @@ enum ESpeakArgument
     PUNCTUATION("--punct=\"%s\""),
     SPLIT_FILES("--split=\"%s\""),
     STANDARD_OUTPUT("--stdout"),
-    VERSION("--version")
+    VERSION("--version"),
+    WORDS("\"%s\"", 0)
     ;
 
     private final String argumentCharacter;
 
-    ESpeakArgument(String argumentCharacter)
-    {
-        this.argumentCharacter = argumentCharacter;
-    }
+    private int order = -1;
 
-    String getArgumentCharacter()
-    {
-        return argumentCharacter;
-    }
+
+
 }

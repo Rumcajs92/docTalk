@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import com.subtilitas.doctalk.ProcessRunner;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -24,12 +25,20 @@ public class ESpeakCommand implements ProcessRunner
     }
 
     @Override
-    public Process run(ProcessBuilder processBuilder) throws IOException
+    @SneakyThrows
+    public Process run(ProcessBuilder processBuilder)
     {
         List<String> commands = getCommands();
         return processBuilder
             .command(commands)
             .start();
+    }
+
+    @Override
+    public Process run()
+    {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        return run(processBuilder);
     }
 
     private List<String> getCommands()
@@ -44,4 +53,6 @@ public class ESpeakCommand implements ProcessRunner
     {
         return String.join(" ", getCommands());
     }
+
+
 }

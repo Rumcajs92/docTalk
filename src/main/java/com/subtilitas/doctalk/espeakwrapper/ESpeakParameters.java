@@ -1,34 +1,29 @@
 package com.subtilitas.doctalk.espeakwrapper;
 
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
-public final class ESpeakParameters
-{
+public final class ESpeakParameters {
 
     private final Map<ESpeakArgument, ESpeakParameter> parameterMap;
 
-    private ESpeakParameters(Builder builder)
-    {
+    private ESpeakParameters(Builder builder) {
         this.parameterMap = Collections.unmodifiableMap(builder.parameterMap);
     }
 
-    public Map<ESpeakArgument, ESpeakParameter> getParameterMap()
-    {
+    public Map<ESpeakArgument, ESpeakParameter> getParameterMap() {
         return parameterMap;
     }
 
     Stream<String> commandStream() {
-        return  parameterMap
-            .values()
-            .stream()
-            .map(ESpeakParameter::write)
-            .flatMap(Collection::stream);
+        return parameterMap
+                .values()
+                .stream()
+                .sorted(Comparator.comparing(ESpeakParameter::getESpeakArgument,
+                        Comparator.comparingInt(ESpeakArgument::getOrder)))
+                .map(ESpeakParameter::write)
+                .flatMap(Collection::stream);
     }
 
     public static Builder builder() {
@@ -83,13 +78,14 @@ public final class ESpeakParameters
             parameterMap.put(ESpeakArgument.VOICE_NAME, new ValuedESpeakParameter<>(ESpeakArgument.VOICE_NAME, voiceName));
             return this;
         }
+
         public Builder waveFile(Path waveFile) {
             parameterMap.put(ESpeakArgument.WAVE_FILE, new ValuedESpeakParameter<>(ESpeakArgument.WAVE_FILE, waveFile));
             return this;
         }
 
         public Builder inputTextEncoding(Integer inputTextEncoding) {
-            parameterMap.put(ESpeakArgument.INPUT_TEXT_ENCODING, new ValuedESpeakParameter<>(ESpeakArgument.INPUT_TEXT_ENCODING, inputTextEncoding ));
+            parameterMap.put(ESpeakArgument.INPUT_TEXT_ENCODING, new ValuedESpeakParameter<>(ESpeakArgument.INPUT_TEXT_ENCODING, inputTextEncoding));
             return this;
         }
 
@@ -160,6 +156,16 @@ public final class ESpeakParameters
 
         public Builder version() {
             parameterMap.put(ESpeakArgument.VERSION, new ESpeakParameter(ESpeakArgument.VERSION));
+            return this;
+        }
+
+        public Builder words(String words) {
+            parameterMap.put(ESpeakArgument.WORDS, new FormattedValuedESpeakParameter<>(ESpeakArgument.WORDS, words));
+            return this;
+        }
+
+        public Builder voices() {
+            parameterMap.put(ESpeakArgument.VOICES, new ESpeakParameter(ESpeakArgument.VOICES));
             return this;
         }
 

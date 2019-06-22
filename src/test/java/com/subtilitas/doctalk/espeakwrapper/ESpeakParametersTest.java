@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ class ESpeakParametersTest
             .builder()
             .textFileToSpeak(testedFile)
             .build();
-        Assertions.assertEquals(Arrays.asList("-f " + testedFile.toString()), getCommands(eSpeakParameters));
+        Assertions.assertEquals(Collections.singletonList("-f " + testedFile.toString()), getCommands(eSpeakParameters));
     }
 
     @Test
@@ -46,7 +47,7 @@ class ESpeakParametersTest
             .builder()
             .voiceName(voiceName)
             .build();
-        Assertions.assertEquals(Arrays.asList("-v pl"), getCommands(eSpeakParameters));
+        Assertions.assertEquals(Collections.singletonList("-v pl"), getCommands(eSpeakParameters));
     }
 
     @Test
@@ -56,7 +57,7 @@ class ESpeakParametersTest
             .voiceName("pl")
             .voiceName("en")
             .build();
-        Assertions.assertEquals(Arrays.asList("-v en"), getCommands(eSpeakParameters));
+        Assertions.assertEquals(Collections.singletonList("-v en"), getCommands(eSpeakParameters));
     }
 
 
