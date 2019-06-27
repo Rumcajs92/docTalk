@@ -26,7 +26,7 @@ class ESpeakParametersTest
             .amplitude(20)
             .ipaPhonemes()
             .build();
-        Assertions.assertEquals(Arrays.asList("-a 20", "--ipa"), getCommands(eSpeakParameters));
+        Assertions.assertEquals(Arrays.asList("-a", "20", "--ipa"), getCommands(eSpeakParameters));
     }
 
     @Test
@@ -37,7 +37,7 @@ class ESpeakParametersTest
             .builder()
             .textFileToSpeak(testedFile)
             .build();
-        Assertions.assertEquals(Collections.singletonList("-f " + testedFile.toString()), getCommands(eSpeakParameters));
+        Assertions.assertEquals(List.of("-f", testedFile.toString()), getCommands(eSpeakParameters));
     }
 
     @Test
@@ -47,7 +47,7 @@ class ESpeakParametersTest
             .builder()
             .voiceName(voiceName)
             .build();
-        Assertions.assertEquals(Collections.singletonList("-v pl"), getCommands(eSpeakParameters));
+        Assertions.assertEquals(List.of("-v", "pl"), getCommands(eSpeakParameters));
     }
 
     @Test
@@ -57,7 +57,7 @@ class ESpeakParametersTest
             .voiceName("pl")
             .voiceName("en")
             .build();
-        Assertions.assertEquals(Collections.singletonList("-v en"), getCommands(eSpeakParameters));
+        Assertions.assertEquals(List.of("-v", "en"), getCommands(eSpeakParameters));
     }
 
 

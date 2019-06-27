@@ -13,12 +13,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @Log4j2
-class UniqueWordExtractorImplTest implements FileComparer {
+class UniqueWordExtractorTest implements FileComparer {
 
-    private final UniqueWordExtractorImpl uniqueWordExtractor = new UniqueWordExtractorImpl();
+    private final UniqueWordExtractor uniqueWordExtractor = new UniqueWordExtractor();
 
     private Path writtenFile;
 
