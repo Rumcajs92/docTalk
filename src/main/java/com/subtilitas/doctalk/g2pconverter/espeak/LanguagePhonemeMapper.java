@@ -6,7 +6,6 @@ public interface LanguagePhonemeMapper {
 
     String map(String eSpeakWord);
 
-
     Charset getCharset();
 
 }
