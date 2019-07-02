@@ -1,9 +1,13 @@
 package com.subtilitas.doctalk.wikiextractor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.difflib.DiffUtils;
+import com.github.difflib.algorithm.DiffException;
+import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.Patch;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.vavr.Tuple2;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,8 +16,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
+@Log4j2
 public class WikiExtractorTest {
 
     private final String hostWiki = "pl.wikipedia.org";
@@ -21,7 +25,7 @@ public class WikiExtractorTest {
     private final WikiExtractor wikiExtractor = new WikiExtractor(hostWiki, new ObjectMapper());
 
     @Test
-    public void testExtracting() throws IOException, URISyntaxException {
+    public void testExtracting() throws IOException, URISyntaxException, DiffException {
 
         //given
         List<Tuple2<String, Integer>> wikiPages = ImmutableList.of(
@@ -35,6 +39,13 @@ public class WikiExtractorTest {
         List<String> expectedOutput = ImmutableList.of(
                 Files.readString(Paths.get(getClass().getResource("expected-wiki-text-Planowanie_ciągłości_działania-1").toURI())));
         Assertions.assertEquals(expectedOutput, extractedText);
+
+        Patch<String> patch = DiffUtils.diff(expectedOutput, extractedText);
+        List<AbstractDelta<String>> deltas = patch.getDeltas();
+        if(!deltas.isEmpty()) {
+            deltas.forEach(log::error);
+        }
+        Assertions.assertEquals(expectedOutput,extractedText);
     }
 
 }
