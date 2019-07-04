@@ -11,10 +11,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Log4j2
 class CMUToolkitTest implements ClassResourceReader {
+
+    private CMUToolkit cmuToolkit = new CMUToolkit(Paths.get("C:\\Users\\tobia\\sphninx\\cmuclmtk"));
 
     @Test
     public void testNormalizingString() throws URISyntaxException, IOException, DiffException {
@@ -22,7 +25,6 @@ class CMUToolkitTest implements ClassResourceReader {
          String textToNormalize = readResource("input-text-to-normalize");
 
          //when
-        CMUToolkit cmuToolkit = new CMUToolkit();
         NormalizedText normalizedText = cmuToolkit.normalizeText(textToNormalize);
 
         //then
@@ -34,6 +36,26 @@ class CMUToolkitTest implements ClassResourceReader {
             deltas.forEach(log::error);
         }
         Assertions.assertEquals(expectedOutput, normalizedText.getFormattedLines());
+
+    }
+
+    @Test
+    void text2wordFrequency() throws IOException, URISyntaxException {
+
+        //given
+        String normalizedInput = readResource("expected-normalized-text");
+        Text2WordFrequencyParameters parameters = Text2WordFrequencyParameters.builder()
+                .verbosity(4)
+                .build();
+
+        //when
+        WordFrequency wordFrequency = cmuToolkit.text2wordFrequency(normalizedInput, parameters);
+
+        //then
+        String output = wordFrequency.getWordFrequencyText();
+        Assertions.assertNotNull(output);
+
+
 
     }
 }
