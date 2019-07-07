@@ -1,9 +1,7 @@
 package com.subtilitas.doctalk.cmutoolkit;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Streams;
 import com.google.common.io.CharStreams;
 import com.subtilitas.doctalk.CommandBuilder;
 import lombok.Getter;
@@ -17,8 +15,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -35,13 +31,25 @@ public class CMUToolkit {
 
     public NormalizedText normalizeText(String textToNormalize) {
         List<String> sentences = Stream.of(textToNormalize.split(getSplittersRegex()))
-                .map(str -> str.replaceAll("[^\\p{IsAlphabetic}|(\\p{Space})]", ""))
-                .filter(str -> str.split(" ").length > 3)
-                .map(str-> str.replaceAll("\\p{Space}{2,}+", " "))
+                .map(this::deleteAllNonAlphabeticExceptSpace)
+                .filter(this::filterShorterThan3)
+                .map(this::keepWhitespaceToOneCharacter)
                 .map(String::strip)
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());
         return new NormalizedText(sentences);
+    }
+
+    private String keepWhitespaceToOneCharacter(String str) {
+        return str.replaceAll("\\p{Space}{2,}+", " ");
+    }
+
+    private boolean filterShorterThan3(String str) {
+        return str.split(" ").length > 3;
+    }
+
+    private String deleteAllNonAlphabeticExceptSpace(String str) {
+        return str.replaceAll("[^\\p{IsAlphabetic}|(\\p{Space})]", "");
     }
 
     private String getSplittersRegex() {
@@ -52,17 +60,21 @@ public class CMUToolkit {
     }
 
 
-    @SneakyThrows
     public WordFrequency text2wordFrequency(String text, Text2WordFrequencyParameters parameters) {
+        String readStream = pipeTextToCommand(text, TOOLKIT_PROGRAMS.TEXT_2_WORD_FREQUENCY, parameters);
+        return new WordFrequency(readStream);
+    }
+
+    @SneakyThrows
+    private String pipeTextToCommand(String text, TOOLKIT_PROGRAMS program, CommandBuilder parameters) {
         List<String> commands = Lists.newArrayList();
-        commands.add(getProgramPath(TOOLKIT_PROGRAMS.TEXT_2_WORD_FREQUENCY));
+        commands.add(getProgramPath(program));
         commands.addAll(parameters.getCommands());
         Process process = startProcessWithRedirectInput(text, commands);
         processError(process);
-        String readStream = readInputStream(process);
-
-        return new WordFrequency(readStream);
+        return readInputStream(process);
     }
+
 
     private String getProgramPath(TOOLKIT_PROGRAMS toolkit_programs) {
         return pathToToolkit.resolve(toolkit_programs.getName()).toAbsolutePath().toString();
@@ -90,11 +102,20 @@ public class CMUToolkit {
         }
     }
 
+    public Vocabulary wordFrequency2Vocabulary(WordFrequency wordFrequency, WordFrequency2VocabularyParameters parameters) {
+        String vocabularyTextFile = pipeTextToCommand(wordFrequency.getWordFrequencyText(), TOOLKIT_PROGRAMS.WORD_FREQUENCY_2_VOCAB, parameters);
+        return new Vocabulary(vocabularyTextFile);
+    }
+
+
+
     @Getter
     @RequiredArgsConstructor
     private enum TOOLKIT_PROGRAMS {
 
-        TEXT_2_WORD_FREQUENCY("text2wfreq.exe");
+        TEXT_2_WORD_FREQUENCY("text2wfreq.exe"),
+        WORD_FREQUENCY_2_VOCAB("wfreq2vocab.exe"),
+        TEXT_2_ID_NGRAM("text2idngram.exe");
 
         private final String name;
 

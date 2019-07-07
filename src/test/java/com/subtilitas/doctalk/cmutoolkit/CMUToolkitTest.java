@@ -41,7 +41,6 @@ class CMUToolkitTest implements ClassResourceReader {
 
     @Test
     void text2wordFrequency() throws IOException, URISyntaxException {
-
         //given
         String normalizedInput = readResource("expected-normalized-text");
         Text2WordFrequencyParameters parameters = Text2WordFrequencyParameters.builder()
@@ -53,9 +52,26 @@ class CMUToolkitTest implements ClassResourceReader {
 
         //then
         String output = wordFrequency.getWordFrequencyText();
-        Assertions.assertNotNull(output);
+        String expectedOutput = readResource("expected-word-frequency");
+        Assertions.assertEquals(expectedOutput, output);
 
+    }
 
+    @Test
+    void wordFrequency2Vocabulary() throws IOException, URISyntaxException {
 
+        //given
+        String wordFrequencyText = readResource("expected-word-frequency");
+        WordFrequency wordFrequency = new WordFrequency(wordFrequencyText);
+        WordFrequency2VocabularyParameters parameters = WordFrequency2VocabularyParameters.builder()
+                .verbosity(2)
+                .build();
+
+        //when
+        Vocabulary vocabulary = cmuToolkit.wordFrequency2Vocabulary(wordFrequency, parameters);
+
+        //then
+        String expectedText = readResource("expected-vocabulary-file");
+        Assertions.assertEquals(expectedText, vocabulary.getVocabularyFileText());
     }
 }

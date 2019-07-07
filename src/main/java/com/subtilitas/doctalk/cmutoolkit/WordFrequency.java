@@ -2,6 +2,7 @@ package com.subtilitas.doctalk.cmutoolkit;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Streams;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class WordFrequency {
 
     private final String wordFrequencyText;
