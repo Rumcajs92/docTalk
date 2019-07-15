@@ -6,6 +6,7 @@ import com.subtilitas.doctalk.adapter.repository.AdaptationRepository;
 import com.subtilitas.doctalk.cmutoolkit.CMUToolkit;
 import com.subtilitas.doctalk.cmutoolkit.NormalizedText;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
@@ -13,7 +14,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class AdaptationService {
+
+
 
     private final CMUToolkit cmuToolkit = new CMUToolkit(Paths.get("C:\\Users\\tobia\\sphninx\\cmuclmtk"));
 
@@ -28,9 +32,11 @@ public class AdaptationService {
         //set adaptation
         Adaptation adaptation = new Adaptation();
         adaptation.setName("adaptation");
-        Adaptation savedAdaptation =  adaptationRepository.save(adaptation);
+        Adaptation savedAdaptation = adaptationRepository.save(adaptation);
         //set transcriptions
 
+        log.info("test");
+        
 //        List<Transcription> transcriptions = insertTranscriptions(id, sentencesToTranscript);
 
         return adaptationRepository.getOne(savedAdaptation.getId()); //adaptationRepository.get(id)
