@@ -14,14 +14,15 @@ public class AdapterController {
     @ResponseBody
     @GetMapping("/adaptation/{id}")
     public Adaptation getAdaptation(@PathVariable Long id) {
-        return null;
+        return adaptationService.getAdaptation(id);
     }
 
     @ResponseBody
     @PostMapping("/adaptation")
     public Adaptation startNewAdaptation(@RequestBody String text) {
-
         return adaptationService.startAdaptation(text);
     }
+
+
 
 }

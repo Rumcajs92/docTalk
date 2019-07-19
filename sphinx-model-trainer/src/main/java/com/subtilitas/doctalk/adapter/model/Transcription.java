@@ -1,7 +1,10 @@
 package com.subtilitas.doctalk.adapter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,8 +13,10 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "TRANSCRIPTION")
+@Table(name = "TRANSCRIPTIONS")
 @NoArgsConstructor
+@ToString(exclude = {"adaptations", "voiceRecordingFileInfos"})
+@EqualsAndHashCode(exclude = {"adaptations", "voiceRecordingFileInfos"})
 public class Transcription {
 
     public Transcription(String transcriptionText) {
@@ -36,6 +41,7 @@ public class Transcription {
     @Column
     private String transcriptionText;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "transcriptions")
     private Set<Adaptation> adaptations;
 

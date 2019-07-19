@@ -1,12 +1,16 @@
 package com.subtilitas.doctalk.adapter.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "VOICE_RECORDING_FILE_INFOS")
 @Data
+@ToString(exclude = {"adaptation", "transcription"})
+@EqualsAndHashCode(exclude = {"adaptation", "transcription"})
 public class VoiceRecordingFileInfo {
 
     @Id
@@ -19,8 +23,10 @@ public class VoiceRecordingFileInfo {
     @Column
     private long adaptationId;
 
-    @Column
-    private String someData;
+//    @Lob
+//    private byte [] data;
+
+    private String extension;
 
     @ManyToOne
     @JoinColumn(name="adaptationId", nullable=false, insertable=false, updatable=false)

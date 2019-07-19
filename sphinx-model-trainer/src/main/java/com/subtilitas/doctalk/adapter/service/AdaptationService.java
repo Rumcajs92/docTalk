@@ -9,6 +9,7 @@ import com.subtilitas.doctalk.cmutoolkit.NormalizedText;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional
 public class AdaptationService {
 
 
@@ -38,26 +40,16 @@ public class AdaptationService {
                 .map(Transcription::new)
                 .collect(Collectors.toSet());
 
-        VoiceRecordingFileInfo voiceRecordingFileInfo = new VoiceRecordingFileInfo();
-        voiceRecordingFileInfo.setSomeData("some data");
-
-
-        transcriptions.forEach(transcription -> transcription.setVoiceRecordingFileInfos(Collections.singleton(voiceRecordingFileInfo)));
-
         //set adaptation
         Adaptation adaptation = new Adaptation();
         adaptation.setName("adaptation");
         adaptation.setTranscriptions(transcriptions);
 
         Adaptation savedAdaptation = adaptationRepository.save(adaptation);
-
         return adaptationRepository.getOne(savedAdaptation.getId()); //adaptationRepository.get(id)
-
     }
 
-    private List<Transcription> insertTranscriptions(Long adaptationId, NormalizedText sentencesToTranscript) {
-
-
-        return null;
+    public Adaptation getAdaptation(Long id) {
+        return adaptationRepository.getOne(id);
     }
 }
