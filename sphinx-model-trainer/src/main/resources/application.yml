@@ -16,3 +16,9 @@ spring:
       hibernate.generate_statistics: true
       hibernate.jdbc.batch_size: 500
       hibernate.order_inserts : true
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 2MB
+      max-request-size: 215MB

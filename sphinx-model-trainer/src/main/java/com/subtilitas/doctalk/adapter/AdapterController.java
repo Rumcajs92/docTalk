@@ -1,9 +1,13 @@
 package com.subtilitas.doctalk.adapter;
 
 import com.subtilitas.doctalk.adapter.model.Adaptation;
+import com.subtilitas.doctalk.adapter.model.dto.AdaptationDTO;
+import com.subtilitas.doctalk.adapter.model.dto.VoiceRecordingFileDTO;
 import com.subtilitas.doctalk.adapter.service.AdaptationService;
+import com.subtilitas.doctalk.adapter.service.VoiceRecordingFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -11,16 +15,30 @@ public class AdapterController {
 
     private final AdaptationService adaptationService;
 
+    private final VoiceRecordingFileService voiceRecordingFileService;
+
     @ResponseBody
     @GetMapping("/adaptation/{id}")
-    public Adaptation getAdaptation(@PathVariable Long id) {
+    public AdaptationDTO getAdaptation(@PathVariable Long id) {
         return adaptationService.getAdaptation(id);
     }
 
     @ResponseBody
     @PostMapping("/adaptation")
-    public Adaptation startNewAdaptation(@RequestBody String text) {
+    public AdaptationDTO startNewAdaptation(@RequestBody String text) {
         return adaptationService.startAdaptation(text);
+    }
+
+    @ResponseBody
+    @PostMapping("/adaptation/{adaptationId}/transcription/{transcriptionId}")
+    public VoiceRecordingFileDTO storeRecording(@PathVariable Long adaptationId, @PathVariable String transcriptionId, @RequestParam("file") MultipartFile file) {
+        return voiceRecordingFileService.storeRecording(adaptationId, transcriptionId, file);
+    }
+
+    @ResponseBody
+    @GetMapping("/voice-files/{id}")
+    public VoiceRecordingFileDTO getVoiceRecording(@PathVariable Long id) {
+        return voiceRecordingFileService.getVoiceRecording(id);
     }
 
 

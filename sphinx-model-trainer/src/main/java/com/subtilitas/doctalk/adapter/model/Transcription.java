@@ -15,8 +15,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "TRANSCRIPTIONS")
 @NoArgsConstructor
-@ToString(exclude = {"adaptations", "voiceRecordingFileInfos"})
-@EqualsAndHashCode(exclude = {"adaptations", "voiceRecordingFileInfos"})
+@ToString(exclude = {"adaptations", "voiceRecordingFiles"})
+@EqualsAndHashCode(exclude = {"adaptations", "voiceRecordingFiles"})
 public class Transcription {
 
     public Transcription(String transcriptionText) {
@@ -46,6 +46,7 @@ public class Transcription {
     private Set<Adaptation> adaptations;
 
     @OneToMany(mappedBy = "transcription")
-    private Set<VoiceRecordingFileInfo> voiceRecordingFileInfos;
+//    @JoinTable(name = "VOICE_RECORDING_FILE_INFOS", joinColumns = { @JoinColumn(name = "ADAPTATION_ID") }, inverseJoinColumns = { @JoinColumn(name = "TRANSCRIPTION_ID") })
+    private Set<VoiceRecordingFile> voiceRecordingFiles;
 
 }

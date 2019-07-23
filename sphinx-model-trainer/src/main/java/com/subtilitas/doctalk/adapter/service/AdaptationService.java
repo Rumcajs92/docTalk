@@ -1,8 +1,9 @@
 package com.subtilitas.doctalk.adapter.service;
 
+import com.subtilitas.doctalk.adapter.mapper.AdaptationMapper;
 import com.subtilitas.doctalk.adapter.model.Adaptation;
 import com.subtilitas.doctalk.adapter.model.Transcription;
-import com.subtilitas.doctalk.adapter.model.VoiceRecordingFileInfo;
+import com.subtilitas.doctalk.adapter.model.dto.AdaptationDTO;
 import com.subtilitas.doctalk.adapter.repository.AdaptationRepository;
 import com.subtilitas.doctalk.cmutoolkit.CMUToolkit;
 import com.subtilitas.doctalk.cmutoolkit.NormalizedText;
@@ -12,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,10 +28,11 @@ public class AdaptationService {
 
     private final AdaptationRepository adaptationRepository;
 
-//    private final TranscriptionRepository  transcriptionRepository;
+    private final AdaptationMapper mapper;
 
 
-    public Adaptation startAdaptation(String text) {
+
+    public AdaptationDTO startAdaptation(String text) {
         NormalizedText sentencesToTranscript = cmuToolkit.normalizeText(text);
 
         //generate transcriptions
@@ -46,10 +46,13 @@ public class AdaptationService {
         adaptation.setTranscriptions(transcriptions);
 
         Adaptation savedAdaptation = adaptationRepository.save(adaptation);
-        return adaptationRepository.getOne(savedAdaptation.getId()); //adaptationRepository.get(id)
+        Adaptation gotAdaptation = adaptationRepository.getOne(savedAdaptation.getId());
+        return mapper.toDTO(gotAdaptation);
+
     }
 
-    public Adaptation getAdaptation(Long id) {
-        return adaptationRepository.getOne(id);
+    public AdaptationDTO getAdaptation(Long id) {
+        Adaptation gotAdaptation = adaptationRepository.getOne(id);
+        return mapper.toDTO(gotAdaptation);
     }
 }
