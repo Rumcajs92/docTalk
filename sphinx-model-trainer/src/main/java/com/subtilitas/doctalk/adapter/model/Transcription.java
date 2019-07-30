@@ -46,7 +46,6 @@ public class Transcription {
     private Set<Adaptation> adaptations;
 
     @OneToMany(mappedBy = "transcription")
-//    @JoinTable(name = "VOICE_RECORDING_FILE_INFOS", joinColumns = { @JoinColumn(name = "ADAPTATION_ID") }, inverseJoinColumns = { @JoinColumn(name = "TRANSCRIPTION_ID") })
     private Set<VoiceRecordingFile> voiceRecordingFiles;
 
 }
