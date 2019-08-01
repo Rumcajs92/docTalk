@@ -19,55 +19,32 @@ import React from "react";
 // nodejs library to set properties for components
 import PropTypes from "prop-types";
 // react plugin for creating charts
-import ChartistGraph from "react-chartist";
 // @material-ui/core
 import withStyles from "@material-ui/core/styles/withStyles";
-import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-import Store from "@material-ui/icons/Store";
-import Warning from "@material-ui/icons/Warning";
-import DateRange from "@material-ui/icons/DateRange";
-import LocalOffer from "@material-ui/icons/LocalOffer";
-import Update from "@material-ui/icons/Update";
-import ArrowUpward from "@material-ui/icons/ArrowUpward";
-import AccessTime from "@material-ui/icons/AccessTime";
-import Accessibility from "@material-ui/icons/Accessibility";
-import BugReport from "@material-ui/icons/BugReport";
-import Code from "@material-ui/icons/Code";
-import Cloud from "@material-ui/icons/Cloud";
 // core components
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import Table from "components/Table/Table.jsx";
-import Tasks from "components/Tasks/Tasks.jsx";
-import CustomTabs from "components/CustomTabs/CustomTabs.jsx";
-import Danger from "components/Typography/Danger.jsx";
 import Card from "components/Card/Card.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
-import CardIcon from "components/Card/CardIcon.jsx";
 import CardBody from "components/Card/CardBody.jsx";
-import CardFooter from "components/Card/CardFooter.jsx";
-
-import { bugs, website, server } from "variables/general.jsx";
-
-import {
-  dailySalesChart,
-  emailsSubscriptionChart,
-  completedTasksChart
-} from "variables/charts.jsx";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 import SnackbarContent from "../../components/Snackbar/SnackbarContent";
-import { AddAlert } from "@material-ui/icons";
 
 class AdaptationTrainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       value: 0,
-      models: [],
-      selectedModel: null
+      selectedModel: null,
+      error: null,
+      modelTableHeaders: [],
+      modelTableData: [],
+      data: []
     };
+    this.selectModel = this.selectModel.bind(this);
   }
 
   handleChange = (event, value) => {
@@ -86,11 +63,43 @@ class AdaptationTrainer extends React.Component {
         return resp.json();
       })
       .then(json => {
+        let headers = ["id", "name"];
+        let data = json.map(object => {
+          return headers.map(header => {
+            return object[header];
+          });
+        });
         this.setState({
-          models: json
+          modelTableHeaders: headers,
+          modelTableData: data,
+          data: json
+        });
+      })
+      .catch(error => {
+        this.setState({
+          error: (
+            <SnackbarContent message={error.message} close color="danger" />
+          )
         });
       });
+  }
 
+  selectModel(properties) {
+    let foundModel = this.state.data.find(obj => {
+      return obj.id === properties[this.state.modelTableHeaders.indexOf("id")];
+    });
+    let selectedModelComponent = (
+      <div>
+        <div>id: {foundModel.id}</div>
+        <div>name: {foundModel.name}</div>
+        <div>{foundModel.id}</div>
+        <div>{foundModel.id}</div>
+      </div>
+    );
+
+    this.setState({
+      selectedModel: selectedModelComponent
+    });
   }
 
   render() {
@@ -109,14 +118,13 @@ class AdaptationTrainer extends React.Component {
               </p>
             </CardHeader>
             <CardBody>
-              {this.state.models.length > 0 && (
+              {this.state.error && this.state.error}
+              {this.state.modelTableData.length > 0 && (
                 <Table
-                  oncli
+                  onRowClick={this.selectModel}
                   tableHeaderColor="primary"
-                  tableHead={Object.keys(this.state.models[0])}
-                  tableData={this.state.models.map(value =>
-                    Object.values(value)
-                  )}
+                  tableHead={this.state.modelTableHeaders}
+                  tableData={this.state.modelTableData}
                 />
               )}
             </CardBody>
@@ -131,7 +139,9 @@ class AdaptationTrainer extends React.Component {
                 voice
               </p>
             </CardHeader>
-            <CardBody></CardBody>
+            <CardBody>
+              {this.state.selectedModel && this.state.selectedModel}
+            </CardBody>
           </Card>
         </GridItem>
       </GridContainer>

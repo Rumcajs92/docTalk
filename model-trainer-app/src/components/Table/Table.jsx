@@ -54,7 +54,7 @@ function CustomTable({ ...props }) {
               <TableRow
                 key={key}
                 className={classes.tableBodyRow}
-                onClick={onRowClick}
+                onClick={() => onRowClick(prop)}
               >
                 {prop.map((prop, key) => {
                   return (
@@ -88,7 +88,8 @@ CustomTable.propTypes = {
     "gray"
   ]),
   tableHead: PropTypes.arrayOf(PropTypes.string),
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
+  // tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.an)),
+  onRowClick: PropTypes.func
 };
 
 export default withStyles(tableStyle)(CustomTable);
