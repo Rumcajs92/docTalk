@@ -37,6 +37,10 @@ import logo from "assets/img/reactlogo.png";
 
 let ps;
 
+const visibleRoutes = routes.filter(route => {
+  return route.navbar;
+});
+
 const switchRoutes = (
   <Switch>
     {routes.map((prop, key) => {
@@ -113,7 +117,7 @@ class Dashboard extends React.Component {
     return (
       <div className={classes.wrapper}>
         <Sidebar
-          routes={routes}
+          routes={visibleRoutes}
           logoText={"Doc Talk App"}
           logo={logo}
           image={this.state.image}
@@ -124,7 +128,7 @@ class Dashboard extends React.Component {
         />
         <div className={classes.mainPanel} ref={this.mainPanel}>
           <Navbar
-            routes={routes}
+            routes={visibleRoutes}
             handleDrawerToggle={this.handleDrawerToggle}
             {...rest}
           />

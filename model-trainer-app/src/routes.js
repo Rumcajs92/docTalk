@@ -20,10 +20,10 @@ import Edit from "@material-ui/icons/Edit";
 import RecordVoiceOver from "@material-ui/icons/RecordVoiceOver";
 import SurroundSound from "@material-ui/icons/SurroundSound";
 // core components/views for Admin layout
-import AdaptationTrainer from "views/AdaptaptationTrainer/AdaptationTrainer.jsx";
+import AdaptationChooser from "./views/AdaptationChooser/AdaptationChooser.jsx";
+import AdaptationTrainer from "./views/AdaptationTrainer/AdaptationTrainer.jsx";
 import Editor from "./views/Editor/Editor";
 import ModelTrainer from "./views/ModelTrainer/ModelTrainer";
-
 
 const dashboardRoutes = [
   {
@@ -31,21 +31,32 @@ const dashboardRoutes = [
     name: "Editor",
     icon: Edit,
     component: Editor,
-    layout: "/admin"
+    layout: "/admin",
+    navbar: true
   },
   {
-    path: "/adaptation-trainer",
+    path: "/adaptation-chooser",
+    name: "Adaptation Chooser",
+    icon: RecordVoiceOver,
+    component: AdaptationChooser,
+    layout: "/admin",
+    navbar: true
+  },
+  {
+    path: "/adaptation-trainer/:modelId",
     name: "Adaptation Trainer",
     icon: RecordVoiceOver,
     component: AdaptationTrainer,
-    layout: "/admin"
+    layout: "/admin",
+    navbar: false
   },
   {
     path: "/model-trainer",
     name: "Model Trainer",
     icon: SurroundSound,
     component: ModelTrainer,
-    layout: "/admin"
+    layout: "/admin",
+    navbar: true
   }
 ];
 

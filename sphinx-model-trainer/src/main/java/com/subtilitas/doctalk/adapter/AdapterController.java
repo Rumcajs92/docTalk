@@ -54,6 +54,12 @@ public class AdapterController {
         return speechModelService.findAllModels();
     }
 
+    @ResponseBody
+    @GetMapping("/speech-model/{modelId}")
+    public SpeechModelDTO getSpeechModel(@PathVariable Long modelId) {
+        return speechModelService.getModel(modelId);
+    }
+
 
 
 }

@@ -32,8 +32,11 @@ import CardBody from "components/Card/CardBody.jsx";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 import SnackbarContent from "../../components/Snackbar/SnackbarContent";
+import RegularButton from "../../components/CustomButtons/Button";
+import { Link } from "react-router-dom";
+import api from "../../api";
 
-class AdaptationTrainer extends React.Component {
+class AdaptationChooser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -56,9 +59,7 @@ class AdaptationTrainer extends React.Component {
   };
 
   componentDidMount() {
-    let api = "http://localhost:8080";
-
-    fetch(api + "/speech-models")
+    fetch(api.speechModels())
       .then(resp => {
         return resp.json();
       })
@@ -90,10 +91,17 @@ class AdaptationTrainer extends React.Component {
     });
     let selectedModelComponent = (
       <div>
-        <div>id: {foundModel.id}</div>
-        <div>name: {foundModel.name}</div>
-        <div>{foundModel.id}</div>
-        <div>{foundModel.id}</div>
+        <div>Id: {foundModel.id}</div>
+        <div>Name: {foundModel.name}</div>
+        <div>Description: {foundModel.desc}</div>
+        <RegularButton
+          component={Link}
+          to={"/admin/adaptation-trainer/" + foundModel.id}
+          com
+          color={"info"}
+        >
+          Adapt
+        </RegularButton>
       </div>
     );
 
@@ -149,8 +157,8 @@ class AdaptationTrainer extends React.Component {
   }
 }
 
-AdaptationTrainer.propTypes = {
+AdaptationChooser.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(dashboardStyle)(AdaptationTrainer);
+export default withStyles(dashboardStyle)(AdaptationChooser);

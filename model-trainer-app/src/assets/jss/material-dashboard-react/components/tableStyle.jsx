@@ -87,7 +87,11 @@ const tableStyle = theme => ({
     color: "inherit",
     display: "table-row",
     outline: "none",
-    verticalAlign: "middle"
+    verticalAlign: "middle",
+    "&:hover,&:focus": {
+      cursor: "pointer",
+      background: "rgba(156, 39, 176,.3)"
+    }
   }
 });
 

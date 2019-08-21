@@ -21,4 +21,9 @@ public class SpeechModelService {
         List<SpeechModel> speechModels = speechModelRepository.findAll();
         return speechModelMapper.toDTOs(speechModels);
     }
+
+    public SpeechModelDTO getModel(Long modelId) {
+        SpeechModel speechModel = speechModelRepository.getOne(modelId);
+        return speechModelMapper.toDTO(speechModel);
+    }
 }
