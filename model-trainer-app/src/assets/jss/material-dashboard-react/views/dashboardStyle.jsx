@@ -113,6 +113,9 @@ const dashboardStyle = {
   scrollable: {
     height: "700px",
     overflow: "scroll"
+  },
+  centered: {
+    justifyContent: "center"
   }
 };
 

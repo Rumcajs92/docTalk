@@ -24,6 +24,9 @@ const api = {
   },
   getFile(path) {
     return host + path;
+  },
+  processAdaptation(id) {
+    return host + "/adaptations/" + id + "/processed-model";
   }
 };
 

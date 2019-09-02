@@ -42,30 +42,24 @@ import ReactPlayer from "react-player";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import GridItem from "../../components/Grid/GridItem";
 import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
 
 class AdaptationRecorder extends React.Component {
   constructor(props) {
     super(props);
-    let state = props.location.state;
     this.state = {
       adaptationId: props.match.params.adaptationId,
-      adaptation: state ? props.location.state.adaptation : null,
+      adaptation: null,
       selectedTranscriptionId: null,
       record: false,
-      transcriptionRecordingMap: state
-        ? props.location.state.adaptation.transcriptions.map(transcription => {
-            return { transcription: transcription, recording: null };
-          })
-        : null
+      transcriptionRecordingMap: null
     };
 
     this.selectTranscription = this.selectTranscription.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
-    if (this.state.adaptation) {
-      return;
-    }
     fetch(api.adaptation(this.state.adaptationId))
       .then(resp => resp.json())
       .then(data =>
@@ -86,10 +80,12 @@ class AdaptationRecorder extends React.Component {
       traRec => traRec.transcription.id === id
     );
 
-    const voiceRecordingFiles =
-      selectedTranscriptionRecording.transcription.voiceRecordingFiles;
+    const voiceRecordingFilesLength = selectedTranscriptionRecording
+      .transcription.voiceRecordingFiles
+      ? selectedTranscriptionRecording.transcription.voiceRecordingFiles.length
+      : 0;
     if (
-      voiceRecordingFiles.length > 0 &&
+      voiceRecordingFilesLength > 0 &&
       !selectedTranscriptionRecording.recording
     ) {
       fetch(
@@ -212,12 +208,45 @@ class AdaptationRecorder extends React.Component {
                     onTranscriptionClick={this.selectTranscription}
                   />
                 </Grid>
+                <Grid xs={12} sm={12} md={12} className={classes.centered}>
+                  <Button
+                    onClick={this.handleSubmit}
+                    variant="contained"
+                    color="primary"
+                  >
+                    Submit
+                  </Button>
+                </Grid>
               </Grid>
             </CardBody>
           </Card>
         </GridContainer>
       </div>
     );
+  }
+
+  handleSubmit() {
+    if (
+      this.state.transcriptionRecordingMap.filter(traRec => {
+        const voiceRecordingFilesLength = traRec.transcription
+          .voiceRecordingFiles
+          ? traRec.transcription.voiceRecordingFiles.length
+          : 0;
+        return voiceRecordingFilesLength === 0 && !traRec.recording;
+      }).length > 0
+    ) {
+      alert("you must send all transcriptions");
+    } else {
+      fetch(api.processAdaptation(this.state.adaptation.id), {
+        method: "POST"
+      })
+        .then(response => {
+          if (response.status !== 200) {
+            alert("error posting response");
+          }
+        })
+        .catch(error => alert(error));
+    }
   }
 }
 
@@ -301,17 +330,17 @@ function TranscriptionList(props) {
     return null;
   }
   return props.transcriptionRecordingMap.map(transcriptionRecording => {
-    const voiceRecordingFiles = transcriptionRecording.transcription
+    const voiceRecordingFilesLength = transcriptionRecording.transcription
       .voiceRecordingFiles
-      ? transcriptionRecording.transcription.voiceRecordingFiles
-      : [];
+      ? transcriptionRecording.transcription.voiceRecordingFiles.length
+      : 0;
     return (
       <TranscriptionItem
         key={transcriptionRecording.transcription.id}
         classes={props.classes}
         transcription={transcriptionRecording.transcription}
         isRecorded={
-          voiceRecordingFiles.length > 0 || !!transcriptionRecording.recording
+          voiceRecordingFilesLength > 0 || !!transcriptionRecording.recording
         }
         recording={transcriptionRecording.recording}
         selected={props.selectedTranscriptionId}

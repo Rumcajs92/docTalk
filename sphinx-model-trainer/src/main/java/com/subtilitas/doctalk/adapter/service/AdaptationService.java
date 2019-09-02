@@ -56,4 +56,18 @@ public class AdaptationService {
         Adaptation gotAdaptation = adaptationRepository.getOne(id);
         return mapper.toDTO(gotAdaptation);
     }
+
+    public AdaptationDTO processAdaptationModel(Long adaptationId) {
+        Adaptation gotAdaptation = adaptationRepository.getOne(adaptationId);
+        if(allTranscriptionsHasRecordedFiles(gotAdaptation)) {
+            //TODO add exception handler
+            throw new RuntimeException("all transcriptions must have voice recorded files");
+        }
+
+        return null;
+    }
+
+    public boolean allTranscriptionsHasRecordedFiles(Adaptation gotAdaptation) {
+        return gotAdaptation.getTranscriptions().stream().anyMatch(transcription -> transcription.getVoiceRecordingFiles().isEmpty());
+    }
 }

@@ -58,6 +58,12 @@ public class AdapterController {
         return adaptationDTO;
     }
 
+    @ResponseBody
+    @PostMapping("/adaptations/{adaptationId}/processed-model")
+    public AdaptationDTO processAdaptedModel(@PathVariable Long adaptationId) {
+        return adaptationService.processAdaptationModel(adaptationId);
+    }
+
     @SneakyThrows
     public String getString(MultipartFile file) {
         return IOUtils.toString(getInputStream(file), Charset.forName("UTF-8"));

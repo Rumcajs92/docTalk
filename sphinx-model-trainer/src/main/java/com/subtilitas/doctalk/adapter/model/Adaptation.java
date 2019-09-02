@@ -32,4 +32,6 @@ public class Adaptation {
     @JoinColumn(name="ADAPTED_SPEECH_MODEL_ID", nullable=false, insertable=false, updatable=false)
     private SpeechModel adaptedSpeechModel;
 
+    //TODO add processed model field
+
 }
