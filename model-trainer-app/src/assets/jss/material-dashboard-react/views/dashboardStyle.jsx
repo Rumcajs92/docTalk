@@ -93,6 +93,26 @@ const dashboardStyle = {
       fontWeight: "400",
       lineHeight: "1"
     }
+  },
+  dropZone: {
+    borderStyle: "dashed",
+    padding: "5",
+    "&:hover,&:focus": {
+      cursor: "pointer",
+      background: "rgba(156, 39, 176,.1)"
+    }
+  },
+  recorded: {
+    background: "rgba(15, 245, 76, .1)",
+    cursor: "pointer"
+  },
+  notRecorded: {
+    background: "rgba(247, 45, 45, .1)",
+    cursor: "pointer"
+  },
+  scrollable: {
+    height: "700px",
+    overflow: "scroll"
   }
 };
 

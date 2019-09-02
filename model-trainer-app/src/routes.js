@@ -24,6 +24,7 @@ import AdaptationChooser from "./views/AdaptationChooser/AdaptationChooser.jsx";
 import AdaptationTrainer from "./views/AdaptationTrainer/AdaptationTrainer.jsx";
 import Editor from "./views/Editor/Editor";
 import ModelTrainer from "./views/ModelTrainer/ModelTrainer";
+import AdaptationRecorder from "./views/AdaptationRecorder/AdaptationRecorder";
 
 const dashboardRoutes = [
   {
@@ -47,6 +48,14 @@ const dashboardRoutes = [
     name: "Adaptation Trainer",
     icon: RecordVoiceOver,
     component: AdaptationTrainer,
+    layout: "/admin",
+    navbar: false
+  },
+  {
+    path: "/adaptation-recorder/:adaptationId",
+    name: "Adaptation Trainer",
+    icon: RecordVoiceOver,
+    component: AdaptationRecorder,
     layout: "/admin",
     navbar: false
   },

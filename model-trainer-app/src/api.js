@@ -6,6 +6,24 @@ const api = {
   },
   speechModel: function(id) {
     return host + "/speech-model/" + id;
+  },
+  adaptationStart(modelId) {
+    return host + "/speech-models/" + modelId + "/adaptations";
+  },
+  adaptation(id) {
+    return host + "/adaptations/" + id;
+  },
+  storeTranscriptionRecording(adaptationId, transcriptionId) {
+    return (
+      host +
+      "/adaptations/" +
+      adaptationId +
+      "/transcriptions/" +
+      transcriptionId
+    );
+  },
+  getFile(path) {
+    return host + path;
   }
 };
 

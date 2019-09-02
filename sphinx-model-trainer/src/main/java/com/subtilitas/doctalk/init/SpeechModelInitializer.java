@@ -22,7 +22,7 @@ public class SpeechModelInitializer implements ApplicationRunner {
         speechModelRepository.save(enUsModel);
         SpeechModel deModel= new SpeechModel();
         deModel.setName("de speech model");
-        deModel.setDesc("basic german monel available on cmusphinx");
+        deModel.setDesc("basic german model available on cmusphinx");
         deModel.setPath("de");
         speechModelRepository.save(deModel);
     }

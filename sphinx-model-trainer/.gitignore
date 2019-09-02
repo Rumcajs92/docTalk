@@ -1,2 +1,4 @@
 sphinxmodeltrainer.iml
 /src/main/resources/com/subtilitas/doctalk/adapter/
+/target
+/sphinx-model-trainer.iml

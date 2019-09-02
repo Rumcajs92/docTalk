@@ -5,14 +5,13 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.print.attribute.standard.MediaSize;
 import java.util.UUID;
 
 @Entity(name = "VOICE_RECORDING_FILE_INFOS")
 @Data
 @ToString(exclude = {/*"adaptation", */"transcription"})
 @EqualsAndHashCode(exclude = {/*"adaptation", */"transcription"})
-public class VoiceRecordingFile {
+public class VoiceRecordingFile  implements FileHolder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

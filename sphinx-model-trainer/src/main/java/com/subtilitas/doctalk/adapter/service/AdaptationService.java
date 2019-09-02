@@ -32,7 +32,7 @@ public class AdaptationService {
 
 
 
-    public AdaptationDTO startAdaptation(String text) {
+    public AdaptationDTO startAdaptation(Long modelId, String text) {
         NormalizedText sentencesToTranscript = cmuToolkit.normalizeText(text);
 
         //generate transcriptions
@@ -44,6 +44,7 @@ public class AdaptationService {
         Adaptation adaptation = new Adaptation();
         adaptation.setName("adaptation");
         adaptation.setTranscriptions(transcriptions);
+        adaptation.setAdaptedSpeechModelId(modelId);
 
         Adaptation savedAdaptation = adaptationRepository.save(adaptation);
         Adaptation gotAdaptation = adaptationRepository.getOne(savedAdaptation.getId());

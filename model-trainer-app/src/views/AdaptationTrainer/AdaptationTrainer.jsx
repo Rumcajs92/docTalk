@@ -39,6 +39,9 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import TextField from "@material-ui/core/TextField";
 import Dropzone from "react-dropzone";
 import Table from "../../components/Table/Table";
+import { sizing } from "@material-ui/system";
+import { Link } from "react-router-dom";
+import RegularButton from "../../components/CustomButtons/Button";
 
 class AdaptationTrainer extends React.Component {
   constructor(props) {
@@ -48,9 +51,11 @@ class AdaptationTrainer extends React.Component {
       modelData: null,
       error: null,
       uploadedFiles: [],
-      uploadedFilesList: []
+      manuallyAdaptationTextInput: "Enter text"
     };
     this.handleOnFileListChange = this.handleOnFileListChange.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleAdapt = this.handleAdapt.bind(this);
   }
 
   componentDidMount() {
@@ -72,11 +77,43 @@ class AdaptationTrainer extends React.Component {
       });
   }
 
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+  }
+
   handleOnFileListChange(acceptedFiles) {
     let concatArray = this.state.uploadedFiles.concat(acceptedFiles);
     this.setState({
       uploadedFiles: concatArray
     });
+  }
+
+  handleAdapt() {
+    const formData = new FormData();
+    this.state.uploadedFiles.forEach(file => {
+      formData.append("files[]", file, file.name);
+    });
+    formData.append("text", this.state.manuallyAdaptationTextInput);
+    fetch(api.adaptationStart(this.state.modelId), {
+      method: "POST",
+      body: formData
+    })
+      .then(response => response.json())
+      .then(json => {
+        let adaptationId = json.id;
+        this.props.history.push({
+          pathname: "/admin/adaptation-recorder/" + adaptationId,
+          state: {
+            adaptation: json
+          }
+        });
+      });
   }
 
   render() {
@@ -121,10 +158,12 @@ class AdaptationTrainer extends React.Component {
                 <ExpansionPanelDetails>
                   <TextField
                     id="manually-adaptation-text-input"
+                    onChange={this.handleInputChange}
+                    name="manuallyAdaptationTextInput"
                     label="Text to adapt"
                     multiline
                     rows="10"
-                    defaultValue="Enter text"
+                    defaultValue={this.state.manuallyAdaptationTextInput}
                     className={classes.textField}
                     margin="normal"
                     fullWidth
@@ -142,28 +181,40 @@ class AdaptationTrainer extends React.Component {
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <Dropzone
-                    onDrop={acceptedFiles =>
-                      this.handleOnFileListChange(acceptedFiles)
-                    }
-                  >
-                    {({ getRootProps, getInputProps }) => (
-                      <section>
-                        <div {...getRootProps()}>
-                          <input {...getInputProps()} />
-                          <p>
-                            Drag ann drop some files here, or click to select
-                            files
-                          </p>
-                        </div>
-                      </section>
-                    )}
-                  </Dropzone>
-                  <div>
-                    <UploadedFileComponent files={this.state.uploadedFiles} />
-                  </div>
+                  <GridContainer width="100%">
+                    <GridItem xs={12} sm={12} md={12}>
+                      <Dropzone
+                        onDrop={acceptedFiles =>
+                          this.handleOnFileListChange(acceptedFiles)
+                        }
+                      >
+                        {({ getRootProps, getInputProps }) => (
+                          <section>
+                            <div
+                              {...getRootProps({
+                                class: classes.dropZone,
+                                width: "100%"
+                              })}
+                            >
+                              <input {...getInputProps()} />
+                              <p>
+                                Drag ann drop some files here, or click to
+                                select files
+                              </p>
+                            </div>
+                          </section>
+                        )}
+                      </Dropzone>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={12}>
+                      <UploadedFileComponent files={this.state.uploadedFiles} />
+                    </GridItem>
+                  </GridContainer>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
+              <RegularButton onClick={this.handleAdapt} color={"info"}>
+                Adapt
+              </RegularButton>
             </CardBody>
           </Card>
         </GridContainer>
@@ -174,20 +225,19 @@ class AdaptationTrainer extends React.Component {
 
 function UploadedFileComponent(props) {
   if (props.files.length > 0) {
+    let headers = ["name", "size", "actions"];
+    let data = props.files.map(file => [file.name, file.size, "actions tools"]);
     return (
-      <ul>
-        {props.files.map(file => (
-          <li key={file.name}>
-            <div>name: {file.name} </div>
-            <div>size: {file.size}</div>
-          </li>
-        ))}
-      </ul>
+      <Table
+        onRowClick={() => {}}
+        tableHeaderColor="primary"
+        tableHead={headers}
+        tableData={data}
+      />
     );
   }
   return null;
 }
-
 
 AdaptationTrainer.propTypes = {
   classes: PropTypes.object.isRequired
