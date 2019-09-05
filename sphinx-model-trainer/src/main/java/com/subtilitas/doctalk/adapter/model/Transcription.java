@@ -8,6 +8,7 @@ import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,6 +47,6 @@ public class Transcription {
     private Set<Adaptation> adaptations;
 
     @OneToMany(mappedBy = "transcription")
-    private Set<VoiceRecordingFile> voiceRecordingFiles;
+    private List<VoiceRecordingFile> voiceRecordingFiles;
 
 }

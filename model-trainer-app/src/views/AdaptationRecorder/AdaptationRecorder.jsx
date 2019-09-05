@@ -37,7 +37,7 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import { Link } from "react-router-dom";
 import RegularButton from "../../components/CustomButtons/Button";
 import { FiberManualRecord, Stop } from "@material-ui/icons";
-import { ReactMic } from "react-mic";
+import ReactMic from "../../components/ReactMicExtended/es/components/ReactMic";
 import ReactPlayer from "react-player";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import GridItem from "../../components/Grid/GridItem";

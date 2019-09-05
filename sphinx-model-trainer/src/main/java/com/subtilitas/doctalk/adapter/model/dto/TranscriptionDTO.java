@@ -2,6 +2,7 @@ package com.subtilitas.doctalk.adapter.model.dto;
 
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,5 +13,5 @@ public class TranscriptionDTO {
 
     private String transcriptionText;
 
-    private Set<VoiceRecordingFileDTO> voiceRecordingFiles;
+    private List<VoiceRecordingFileDTO> voiceRecordingFiles;
 }
