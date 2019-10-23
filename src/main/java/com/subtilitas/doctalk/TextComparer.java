@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public interface FileComparer {
+public interface TextComparer {
 
     default void compareFiles(Path outputFile, Path expectedResultPath) throws IOException, DiffException {
         List<String> expectedResultStringList = Files.readAllLines(expectedResultPath);
@@ -22,6 +22,7 @@ public interface FileComparer {
         deltas.forEach(logger()::error);
         Assertions.assertTrue(deltas.isEmpty());
     }
+
 
     Logger logger();
 

@@ -32,7 +32,7 @@ public class VoiceRecordingFileService {
         voiceRecordingFile.setData(file.getBytes());
         voiceRecordingFile.setExtension(file.getContentType());
         VoiceRecordingFile savedFile = recordingFileRepository.save(voiceRecordingFile);
-        voiceRecordingFile.setPath(String.format("/file/%s/%d", FileSourceEnum.VOICE_RECORDING.getName() , savedFile.getId()));
+        voiceRecordingFile.setPath(FileSourceEnum.VOICE_RECORDING.parse(savedFile.getId()));
         recordingFileRepository.save(voiceRecordingFile);
         VoiceRecordingFile gotFile = recordingFileRepository.getOne(savedFile.getId());
         return mapper.toDTO(gotFile);

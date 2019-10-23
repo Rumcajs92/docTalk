@@ -12,4 +12,6 @@ public class AdaptationDTO {
     private String name;
 
     private Set<TranscriptionDTO> transcriptions;
+
+    private String path;
 }

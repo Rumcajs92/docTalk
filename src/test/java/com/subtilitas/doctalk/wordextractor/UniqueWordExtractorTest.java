@@ -1,7 +1,7 @@
 package com.subtilitas.doctalk.wordextractor;
 
 import com.github.difflib.algorithm.DiffException;
-import com.subtilitas.doctalk.FileComparer;
+import com.subtilitas.doctalk.TextComparer;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Log4j2
-class UniqueWordExtractorTest implements FileComparer {
+class UniqueWordExtractorTest implements TextComparer {
 
     private final UniqueWordExtractor uniqueWordExtractor = new UniqueWordExtractor();
 

@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "ADAPTATIONS")
 @ToString(exclude = {"transcriptions"})
 @EqualsAndHashCode(exclude = {"transcriptions"})
-public class Adaptation {
+public class Adaptation implements FileHolder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,10 @@ public class Adaptation {
     @JoinColumn(name="ADAPTED_SPEECH_MODEL_ID", nullable=false, insertable=false, updatable=false)
     private SpeechModel adaptedSpeechModel;
 
-    //TODO add processed model field
+    @Lob
+    private byte [] data;
+
+    @Column
+    private String path;
 
 }

@@ -59,7 +59,7 @@ public class AdapterController {
     }
 
     @ResponseBody
-    @PostMapping("/adaptations/{adaptationId}/processed-model")
+    @PutMapping("/adaptations/{adaptationId}/processed-model")
     public AdaptationDTO processAdaptedModel(@PathVariable Long adaptationId) {
         return adaptationService.processAdaptationModel(adaptationId);
     }

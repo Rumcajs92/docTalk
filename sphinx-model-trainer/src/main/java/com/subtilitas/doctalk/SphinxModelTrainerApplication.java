@@ -3,6 +3,7 @@ package com.subtilitas.doctalk;
 import com.subtilitas.doctalk.adapter.configuration.AdapterConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication

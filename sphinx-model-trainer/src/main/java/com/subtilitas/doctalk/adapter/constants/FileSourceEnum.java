@@ -11,10 +11,15 @@ import java.util.stream.Stream;
 @Getter
 public enum FileSourceEnum {
 
-    VOICE_RECORDING("voice-recordings");
+    VOICE_RECORDING("voice-recordings"),
+    ADAPTED_MODELS("adapted-models");
 
     @NonNull
     private final String name;
+
+    public String parse(long id) {
+        return String.format("/file/%s/%d", this.getName(), id);
+    }
 
     public static FileSourceEnum of(String s) {
         return Stream.of(values())

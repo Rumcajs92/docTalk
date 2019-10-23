@@ -1,5 +1,6 @@
 package com.subtilitas.doctalk.cmutoolkit;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
@@ -15,7 +16,9 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -30,23 +33,47 @@ public class CMUToolkit {
     private final Set<String> splitters = ImmutableSet.of(",", ".", "\n", System.lineSeparator());
 
     public NormalizedText normalizeText(String textToNormalize) {
-        List<String> sentences = Stream.of(textToNormalize.split(getSplittersRegex()))
+        List<String> rawSentences = Stream.of(textToNormalize.split(getSplittersRegex()))
                 .map(this::deleteAllNonAlphabeticExceptSpace)
-                .filter(this::filterShorterThan3)
                 .map(this::keepWhitespaceToOneCharacter)
                 .map(String::strip)
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());
+        List<String> sentences = joinStringsShorterThan(rawSentences, 35);
         return new NormalizedText(sentences);
     }
+
+    private List<String> joinStringsShorterThan(List<String> rawSentences, int limit) {
+        ListIterator<String> iterator = rawSentences.listIterator();
+        List<String> wordsToJoin = new ArrayList<>();
+        List<String> result = new ArrayList<>();
+        while (iterator.hasNext()) {
+            String sentence = iterator.next();
+            if(!sentence.isBlank()){
+                wordsToJoin.add(sentence);
+            }
+            String join = Joiner.on(" ").join(wordsToJoin);
+            if(hasMoreWordsThan(limit, join)) {
+                result.add(join);
+                wordsToJoin.clear();
+            }
+        }
+        String join = Joiner.on(" ").join(wordsToJoin);
+        if(hasMoreWordsThan(limit, join)) {
+            result.add(join);
+        }
+        return result;
+    }
+
+    private boolean hasMoreWordsThan(int limit, String join) {
+        return join.split(" ").length > limit;
+    }
+
 
     private String keepWhitespaceToOneCharacter(String str) {
         return str.replaceAll("\\p{Space}{2,}+", " ");
     }
 
-    private boolean filterShorterThan3(String str) {
-        return str.split(" ").length > 3;
-    }
 
     private String deleteAllNonAlphabeticExceptSpace(String str) {
         return str.replaceAll("[^\\p{IsAlphabetic}|(\\p{Space})]", "");

@@ -39,7 +39,7 @@ public class Transcription {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column
+    @Column(length = 512)
     private String transcriptionText;
 
     @JsonIgnore
