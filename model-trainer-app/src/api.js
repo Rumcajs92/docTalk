@@ -22,6 +22,9 @@ const api = {
       transcriptionId
     );
   },
+  getResultFromAdaptedModel(adaptationId) {
+    return host + "/adaptations/" + adaptationId + "/result";
+  },
   getFile(path) {
     return host + path;
   },

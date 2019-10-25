@@ -22,12 +22,12 @@ var onDataCallback = void 0;
 
 var constraints = {
   audio: {
-    sampleRate: 16000,
-    channelCount: 1,
-    sampleSize: 16
+    sampleRate: { ideal: 16000 },
+    sampleSize: { exact: 16 },
+    channelCount: 1
   },
   video: false
-}; // constraints - only audio needed
+};// constraints - only audio needed
 
 navigator.getUserMedia =
   navigator.getUserMedia ||
@@ -67,6 +67,8 @@ export var MicrophoneRecorder = (function() {
           console.log("getUserMedia supported.");
 
           navigator.mediaDevices.getUserMedia(constraints).then(function(str) {
+
+
             stream = str;
 
             if (MediaRecorder.isTypeSupported(mediaOptions.mimeType)) {

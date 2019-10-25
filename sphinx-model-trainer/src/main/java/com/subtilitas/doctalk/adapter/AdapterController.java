@@ -3,13 +3,10 @@ package com.subtilitas.doctalk.adapter;
 import com.google.common.base.Joiner;
 import com.subtilitas.doctalk.adapter.constants.FileSourceEnum;
 import com.subtilitas.doctalk.adapter.model.Adaptation;
-import com.subtilitas.doctalk.adapter.model.dto.AdaptationDTO;
-import com.subtilitas.doctalk.adapter.model.dto.SpeechModelDTO;
-import com.subtilitas.doctalk.adapter.model.dto.VoiceRecordingFileDTO;
-import com.subtilitas.doctalk.adapter.service.AdaptationService;
-import com.subtilitas.doctalk.adapter.service.FileService;
-import com.subtilitas.doctalk.adapter.service.SpeechModelService;
-import com.subtilitas.doctalk.adapter.service.VoiceRecordingFileService;
+import com.subtilitas.doctalk.adapter.model.dto.*;
+import com.subtilitas.doctalk.adapter.service.*;
+import edu.cmu.sphinx.api.SpeechResult;
+import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +14,16 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,12 +36,10 @@ import java.util.stream.Stream;
 public class AdapterController {
 
     private final AdaptationService adaptationService;
-
     private final VoiceRecordingFileService voiceRecordingFileService;
-
     private final SpeechModelService speechModelService;
-
     private final FileService fileService;
+    private final AdaptationModelContainer adaptationModelContainer;
 
     @ResponseBody
     @GetMapping("/adaptations/{id}")
@@ -66,7 +67,7 @@ public class AdapterController {
 
     @SneakyThrows
     public String getString(MultipartFile file) {
-        return IOUtils.toString(getInputStream(file), Charset.forName("UTF-8"));
+        return IOUtils.toString(getInputStream(file), StandardCharsets.UTF_8);
     }
 
     @SneakyThrows
@@ -105,6 +106,26 @@ public class AdapterController {
         return speechModelService.getModel(modelId);
     }
 
+    @ResponseBody
+    @PutMapping("/adaptations/{adaptationId}/result")
+    @SneakyThrows
+    public String send(@PathVariable Long adaptationId, @RequestParam("file") MultipartFile file) {
 
+        InputStream is = new ByteArrayInputStream(file.getBytes());
+
+        StreamSpeechRecognizer recognizer = adaptationModelContainer.getModelRecognizer(adaptationId);
+        recognizer.startRecognition(is);
+        SpeechResult result;
+        List<String> hypothesisList = new ArrayList<>();
+        while ((result = recognizer.getResult()) != null) {
+            String hypothesis = result.getHypothesis();
+            hypothesisList.add(hypothesis);
+        }
+        recognizer.stopRecognition();
+        String resultString = Joiner.on(" ").join(hypothesisList);
+        log.info("Result: {}",resultString);
+        return resultString;
+
+    }
 
 }

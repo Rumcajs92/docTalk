@@ -26,27 +26,74 @@ import SnackbarContent from "components/Snackbar/SnackbarContent.jsx";
 // core components
 
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
+import ReactMic from "../../components/ReactMicExtended/es/components/ReactMic";
+import { Stomp } from "@stomp/stompjs/esm5/compatibility/stomp";
+import api from "../../api";
+
+import { encodeWavFile } from "wav-file-encoder";
+
+import resampler from "audio-resampler";
 
 class Editor extends React.Component {
-  state = {
-    value: 0
-  };
-  handleChange = (event, value) => {
-    this.setState({ value });
+  constructor(props) {
+    super(props);
+    this.state = {
+      record: false,
+      rec: null
+    };
+    this.onStop = this.onStop.bind(this);
+  }
+
+  timeout = 250;
+
+  startRecording = () => {
+    this.setState({
+      record: true
+    });
   };
 
-  handleChangeIndex = index => {
-    this.setState({ value: index });
+  stopRecording = () => {
+    this.setState({
+      record: false
+    });
   };
+
+  onStop(recordedBlob) {
+    resampler(recordedBlob.blobURL, 16000, event => {
+      const formData = new FormData();
+      let arrayBuffer = encodeWavFile(event.getAudioBuffer(), 0);
+      let resampledBlob = new Blob([arrayBuffer], { type: "audio/wav" });
+      formData.append("file", resampledBlob, "file");
+      fetch(api.getResultFromAdaptedModel(1), {
+        method: "PUT",
+        body: formData
+      })
+        .then(resp => resp.json())
+        .then(json => {
+          console.log("Voice Recording File: ");
+          console.log(json);
+        });
+    });
+  }
+
   render() {
     // const { classes } = this.props;
     return (
       <div>
-        <SnackbarContent
-          message={"Page under construction"}
-          close
-          color="info"
+        <ReactMic
+          record={this.state.record}
+          className="sound-wave"
+          onStop={this.onStop}
+          strokeColor="#000000"
+          backgroundColor="#FF4081"
+          // mimeType={"audio/wav"}
         />
+        <button onClick={this.startRecording} type="button">
+          Start
+        </button>
+        <button onClick={this.stopRecording} type="button">
+          Stop
+        </button>
       </div>
     );
   }

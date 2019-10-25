@@ -9,8 +9,6 @@ import com.subtilitas.doctalk.adapter.model.dto.AdaptationDTO;
 import com.subtilitas.doctalk.adapter.repository.AdaptationRepository;
 import com.subtilitas.doctalk.cmutoolkit.CMUToolkit;
 import com.subtilitas.doctalk.cmutoolkit.NormalizedText;
-import edu.cmu.sphinx.api.LiveSpeechRecognizer;
-import edu.cmu.sphinx.api.SpeechResult;
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -21,21 +19,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import java.io.*;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.subtilitas.doctalk.processRunner.ProcessRunner.runProcess;
 
@@ -50,6 +44,7 @@ public class AdaptationService {
     private final CMUToolkit cmuToolkit = new CMUToolkit(Paths.get("C:\\Users\\tobia\\sphninx\\cmuclmtk"));
 
     private final AdaptationRepository adaptationRepository;
+    private final AdaptationModelContainer modelContainer;
 
     private final AdaptationMapper mapper;
 
@@ -91,16 +86,10 @@ public class AdaptationService {
                 .andThenTry((zippedPath) -> {
                     gotAdaptation.setData(Files.readAllBytes(zippedPath));
                 })
-                .andFinallyTry(() -> deleteDirectory(temporaryAdaptationDirectory));
+                .andFinallyTry(() -> modelContainer.add(gotAdaptation.getId(), temporaryAdaptationDirectory));
         gotAdaptation.setPath(FileSourceEnum.ADAPTED_MODELS.parse(gotAdaptation.getId()));
         adaptationRepository.save(gotAdaptation);
         return getAdaptation(adaptationId);
-    }
-
-    public void deleteDirectory(Path temporaryAdaptationDirectory) throws IOException {
-        Files.walk(temporaryAdaptationDirectory)
-                .sorted(Comparator.reverseOrder())
-                .forEach(this::deleteFile);
     }
 
     @SneakyThrows
@@ -228,10 +217,6 @@ public class AdaptationService {
         return gotAdaptation.getTranscriptions().stream().map(transcription -> {
             //TODO remove get(0)
             byte [] data = transcription.getVoiceRecordingFiles().get(0).getData();
-
-//            InputStream byteInputStream = new ByteArrayInputStream(data);
-//            AudioFormat audioFormat = new AudioFormat(16000.0f, 16, 1, true, false);
-//            AudioInputStream audioInputStream = new AudioInputStream(byteInputStream,audioFormat,  1);
             Path audioPath = temporaryAdaptationDirectory.resolve(String.format("%s.wav", transcription.getId()));
             try {
                 Files.write(audioPath, data);
@@ -239,8 +224,6 @@ public class AdaptationService {
                 e.printStackTrace();
             }
             return audioPath;
-//            writeAudioFile(audioInputStream, audioPath);
-//            return audioPath;
         }).collect(Collectors.toList());
     }
 
