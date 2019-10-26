@@ -21,25 +21,28 @@ import PropTypes from "prop-types";
 // react plugin for creating charts
 // @material-ui/core
 import withStyles from "@material-ui/core/styles/withStyles";
-import SnackbarContent from "components/Snackbar/SnackbarContent.jsx";
+import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
+import ReactMic from "../../components/ReactMicExtended/es/components/ReactMic";
+import api from "../../api";
+import { encodeWavFile } from "wav-file-encoder";
+import resampler from "audio-resampler";
+import Grid from "@material-ui/core/Grid";
+import GridContainer from "../../components/Grid/GridContainer";
+import Card from "../../components/Card/Card";
+import CardHeader from "../../components/Card/CardHeader";
+import RecordingToolbar from "../../components/RecordingToolbar/RecordingToolbar";
+import CKEditor from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
 // @material-ui/icons
 // core components
 
-import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
-import ReactMic from "../../components/ReactMicExtended/es/components/ReactMic";
-import { Stomp } from "@stomp/stompjs/esm5/compatibility/stomp";
-import api from "../../api";
-
-import { encodeWavFile } from "wav-file-encoder";
-
-import resampler from "audio-resampler";
-
-class Editor extends React.Component {
+class SpeechEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       record: false,
-      rec: null
+      text: "Hello sphinx"
     };
     this.onStop = this.onStop.bind(this);
   }
@@ -68,39 +71,76 @@ class Editor extends React.Component {
         method: "PUT",
         body: formData
       })
-        .then(resp => resp.json())
-        .then(json => {
+        .then(resp => resp.text())
+        .then(text => {
           console.log("Voice Recording File: ");
-          console.log(json);
+          console.log(text);
+          let newText = this.state.text + text;
+          this.setState({
+            text: newText
+          });
         });
     });
   }
 
   render() {
-    // const { classes } = this.props;
+    const { classes } = this.props;
     return (
       <div>
-        <ReactMic
-          record={this.state.record}
-          className="sound-wave"
-          onStop={this.onStop}
-          strokeColor="#000000"
-          backgroundColor="#FF4081"
-          // mimeType={"audio/wav"}
-        />
-        <button onClick={this.startRecording} type="button">
-          Start
-        </button>
-        <button onClick={this.stopRecording} type="button">
-          Stop
-        </button>
+        <GridContainer>
+          <Card>
+            <CardHeader color="primary">
+              <h4 className={classes.cardTitleWhite}>
+                Adaptation Transcriptions
+              </h4>
+            </CardHeader>
+            <ReactMic
+              record={this.state.record}
+              className="sound-wave"
+              onStop={this.onStop}
+              strokeColor="#000000"
+              backgroundColor="#FF4081"
+              // mimeType={"audio/wav"}
+            />
+            <Grid xs={12} sm={12} md={12}>
+              <RecordingToolbar
+                record={this.state.record}
+                startRecord={this.startRecording}
+                stopRecord={this.stopRecording}
+              />
+            </Grid>
+            <Grid xs={12} sm={12} md={12}>
+              <CKEditor
+                editor={ClassicEditor}
+                data={this.state.text}
+                onInit={editor => {
+                  // You can store the "editor" and use when it is needed.
+                  console.log("Editor is ready to use!", editor);
+                }}
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  this.setState({
+                    text: data
+                  })
+                  console.log({ event, editor, data });
+                }}
+                onBlur={(event, editor) => {
+                  console.log("Blur.", editor);
+                }}
+                onFocus={(event, editor) => {
+                  console.log("Focus.", editor);
+                }}
+              />
+            </Grid>
+          </Card>
+        </GridContainer>
       </div>
     );
   }
 }
 
-Editor.propTypes = {
+SpeechEditor.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(dashboardStyle)(Editor);
+export default withStyles(dashboardStyle)(SpeechEditor);

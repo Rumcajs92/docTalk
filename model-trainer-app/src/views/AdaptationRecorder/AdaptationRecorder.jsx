@@ -41,6 +41,7 @@ import ReactMic from "../../components/ReactMicExtended/es/components/ReactMic";
 import ReactPlayer from "react-player";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import GridItem from "../../components/Grid/GridItem";
+import RecordingToolbar from "../../components/RecordingToolbar/RecordingToolbar";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 
@@ -192,7 +193,7 @@ class AdaptationRecorder extends React.Component {
                   />
                 </Grid>
                 <Grid xs={12} sm={12} md={12}>
-                  <RecordingToolBar
+                  <RecordingToolbar
                     record={this.state.record}
                     startRecord={this.startRecording}
                     stopRecord={this.stopRecording}
@@ -311,18 +312,7 @@ function Player(props) {
   );
 }
 
-function RecordingToolBar(props) {
-  const recordOrPlay = props.record ? (
-    <RegularButton color={"info"} onClick={props.stopRecord}>
-      <Stop /> Stop
-    </RegularButton>
-  ) : (
-    <RegularButton color={"danger"} onClick={props.startRecord}>
-      <FiberManualRecord /> Record
-    </RegularButton>
-  );
-  return <ButtonGroup>{recordOrPlay}</ButtonGroup>;
-}
+
 
 function TranscriptionList(props) {
   // eslint-disable-next-line react/jsx-no-undef
