@@ -239,7 +239,7 @@ class AdaptationRecorder extends React.Component {
       alert("you must send all transcriptions");
     } else {
       fetch(api.processAdaptation(this.state.adaptation.id), {
-        method: "POST"
+        method: "PUT"
       })
         .then(response => {
           if (response.status !== 200) {

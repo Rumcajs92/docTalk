@@ -5,7 +5,7 @@ const api = {
     return host + "/speech-models";
   },
   speechModel: function(id) {
-    return host + "/speech-model/" + id;
+    return host + "/speech-models/" + id;
   },
   adaptationStart(modelId) {
     return host + "/speech-models/" + modelId + "/adaptations";

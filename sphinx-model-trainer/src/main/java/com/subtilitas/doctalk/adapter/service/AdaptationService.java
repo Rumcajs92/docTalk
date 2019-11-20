@@ -86,15 +86,10 @@ public class AdaptationService {
                 .andThenTry((zippedPath) -> {
                     gotAdaptation.setData(Files.readAllBytes(zippedPath));
                 })
-                .andFinallyTry(() -> modelContainer.add(gotAdaptation.getId(), temporaryAdaptationDirectory));
+                .andFinally(() -> modelContainer.add(gotAdaptation.getId(), temporaryAdaptationDirectory));
         gotAdaptation.setPath(FileSourceEnum.ADAPTED_MODELS.parse(gotAdaptation.getId()));
         adaptationRepository.save(gotAdaptation);
         return getAdaptation(adaptationId);
-    }
-
-    @SneakyThrows
-    public boolean deleteFile(Path path){
-        return Files.deleteIfExists(path);
     }
 
     private Path adaptModel(Path temporaryAdaptationDirectory, Adaptation gotAdaptation) throws IOException, URISyntaxException {
@@ -263,16 +258,11 @@ public class AdaptationService {
         return gotAdaptation.getName() + gotAdaptation.getId();
     }
 
-    @SneakyThrows
-    public void writeAudioFile(AudioInputStream audioInputStream, Path audioPath) {
-        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, audioPath.toFile());
-    }
-
-    public String getTranscriptionLine(Transcription transcription) {
+    private String getTranscriptionLine(Transcription transcription) {
         return String.format("%s (%s)", transcription.getTranscriptionText().stripTrailing(), transcription.getId().toString());
     }
 
-    public boolean allTranscriptionsHasRecordedFiles(Adaptation gotAdaptation) {
+    private boolean allTranscriptionsHasRecordedFiles(Adaptation gotAdaptation) {
         return gotAdaptation.getTranscriptions().stream().anyMatch(transcription -> transcription.getVoiceRecordingFiles().isEmpty());
     }
 }

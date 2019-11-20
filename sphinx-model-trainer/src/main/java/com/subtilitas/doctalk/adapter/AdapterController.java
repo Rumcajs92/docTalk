@@ -101,7 +101,7 @@ public class AdapterController {
     }
 
     @ResponseBody
-    @GetMapping("/speech-model/{modelId}")
+    @GetMapping("/speech-models/{modelId}")
     public SpeechModelDTO getSpeechModel(@PathVariable Long modelId) {
         return speechModelService.getModel(modelId);
     }

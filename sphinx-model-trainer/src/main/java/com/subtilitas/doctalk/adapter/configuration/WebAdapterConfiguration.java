@@ -15,5 +15,4 @@ public class WebAdapterConfiguration extends WebMvcConfigurationSupport {
         return service;
     }
 
-
 }
